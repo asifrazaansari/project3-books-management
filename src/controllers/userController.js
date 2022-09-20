@@ -49,10 +49,11 @@ const createUser = async function (req, res) {
         if (!validateName(user.name)) return res.status(400).send({ status: false, msg: "Please Enter A Valid Name" });
         user.name = user.name.toLowerCase()
         user.name = ConversionToProperName(user.name);
-        if (!user.phone) return res.status(400).send({ status: false, msg: "Please Enter Title,Title Is A Mandatory Field" });
+        if (!user.phone) return res.status(400).send({ status: false, msg: "Please Enter Phone,Phone Is A Mandatory Field" });
+        if (user.phone.length > 10) return res.status(400).send({ status: false, msg: "Please Enter A Valid Phone Number" });
         if (!validateMobile(user.phone)) return res.status(400).send({ status: false, msg: "Please Enter A Valid Phone Number" });
         if (!user.email) return res.status(400).send({ status: false, msg: "Please Enter Email,Email Is A Mandatory Field" });
-        if (!validator.isEmail(user.email)) return res.status(400).send({ status: false, msg: "Please Enter A Valid Name" });
+        if (!validator.isEmail(user.email)) return res.status(400).send({ status: false, msg: "Please Enter A Valid Email" });
 
         let uniquePhoneEmail = await userModel.findOne({ $or: [{ email: user.email }, { phone: user.phone }] });
         if (uniquePhoneEmail) {
@@ -61,12 +62,18 @@ const createUser = async function (req, res) {
         };
 
         if (!user.password) return res.status(400).send({ status: false, msg: "Please Enter Password,Password Is A Mandatory Field" });
-        if (!checkPassword) return res.status(400).send({ status: false, msg: "Please Enter A Valid Password,Password Length Should Be Minimum 8 And Maximum 15" });
+        if (!checkPassword(user.password)) return res.status(400).send({ status: false, msg: "Please Enter A Valid Password,Password Length Should Be Minimum 8 And Maximum 15" });
 
-        if ((typeof user.address.street !== "string" && typeof user.address.street !== "undefined") || (typeof user.address.city !== "string" && typeof user.address.city !== "undefined") || (typeof user.address.pincode !== "string" && typeof user.address.pincode !== "undefined")) return res.status(400).send({ status: false, msg: "Invalid Address" });
+        if (user.address) {
+            if ((typeof user.address.street !== "string" && typeof user.address.street !== "undefined") || (typeof user.address.city !== "string" && typeof user.address.city !== "undefined") || (typeof user.address.pincode !== "string" && typeof user.address.pincode !== "undefined")) return res.status(400).send({ status: false, msg: "Invalid Address" });
 
-        let savedUser = await userModel.create(user);
-        return res.status(201).send({ status: true, message: "User Created Successfully", data: savedUser })
+            let savedUser = await userModel.create(user);
+            return res.status(201).send({ status: true, message: "User Created Successfully", data: savedUser })
+        }
+        else {
+            let savedUser = await userModel.create(user);
+            return res.status(201).send({ status: true, message: "User Created Successfully", data: savedUser })
+        }
     }
     catch (error) {
         return res.status(500).send({ status: false, msg: error.message })
