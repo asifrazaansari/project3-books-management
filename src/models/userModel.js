@@ -20,17 +20,14 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    password:{
-        type : String,
-        required : true
+    password: {
+        type: String,
+        required: true
     },
-    address : {
-        type:{String},
-        Street : String,
-        city : String,
-        pincode : String
+    address: {
+       type:mongoose.Schema.Types.Mixed
     }
-},{timestamps:true});
+}, { timestamps: true });
 
 
-module.exports = mongoose.model("user",userSchema);
+module.exports = mongoose.model("user", userSchema);
