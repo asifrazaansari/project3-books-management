@@ -57,8 +57,8 @@ const createUser = async function (req, res) {
 
         let uniquePhoneEmail = await userModel.findOne({ $or: [{ email: user.email }, { phone: user.phone }] });
         if (uniquePhoneEmail) {
-            if (uniquePhoneEmail.email === user.email) return res.status(400).send({ status: false, msg: "EmailId Already Exists,Please Input Another EmailId" });
-            else { return res.status(400).send({ status: false, msg: "Mobile Number Already Exists,Please Input Another Mobile Number" }) }
+            if (uniquePhoneEmail.phone === user.phone) return res.status(400).send({ status: false, msg: "Phone Already Exists,Please Input Another Phone Number" });
+            else { return res.status(400).send({ status: false, msg: "Email Already Exists,Please Input Another EmailId" }) }
         };
 
         if (!user.password) return res.status(400).send({ status: false, msg: "Please Enter Password,Password Is A Mandatory Field" });
@@ -68,6 +68,7 @@ const createUser = async function (req, res) {
             if ((typeof user.address.street !== "string" && typeof user.address.street !== "undefined") || (typeof user.address.city !== "string" && typeof user.address.city !== "undefined") || (typeof user.address.pincode !== "string" && typeof user.address.pincode !== "undefined")) return res.status(400).send({ status: false, msg: "Invalid Address" });
 
             let savedUser = await userModel.create(user);
+
             return res.status(201).send({ status: true, message: "User Created Successfully", data: savedUser })
         }
         else {
