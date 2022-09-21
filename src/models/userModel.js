@@ -1,5 +1,13 @@
 const mongoose = require("mongoose");
 
+
+
+const addressSchema = new mongoose.Schema({
+    street: String,
+    pincode: String,
+    city: String
+},{_id : false })
+
 const userSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -24,9 +32,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    address: {
-       type:mongoose.Schema.Types.Mixed
-    }
+    address: addressSchema
 }, { timestamps: true });
 
 
