@@ -5,7 +5,7 @@ const objectId = mongoose.Schema.Types.ObjectId  // syntax to refer an userId in
 const bookSchema = new mongoose.Schema({
     title: { type: String, required: true, unique: true, trim: true },
     excerpt: { type: String, required: true, trim: true },
-    userId: { type: objectId, required: true, ref: 'User', trim: true },
+    userId: { type: objectId, required: true, ref: "User", trim: true },
     ISBN: { type: String, required: true, unique: true },
     category: { type: String, required: true },
     subcategory: [{ type: String, required: true }],
