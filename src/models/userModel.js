@@ -3,10 +3,19 @@ const mongoose = require("mongoose");
 
 
 const addressSchema = new mongoose.Schema({
-    street: String,
-    pincode: String,
-    city: String
-},{_id : false })
+    street: {
+        type: String,
+        trim: true
+    },
+    pincode: {
+        type: String,
+        trim: true
+    },
+    city: {
+        type: String,
+        trim: true
+    }
+}, { _id: false })
 
 const userSchema = new mongoose.Schema({
     title: {
