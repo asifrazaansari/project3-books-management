@@ -1,22 +1,31 @@
 const mongoose = require("mongoose");
 
-
-
 const addressSchema = new mongoose.Schema({
-    street: String,
-    pincode: String,
-    city: String
-},{_id : false })
+    street: {
+        type: String,
+        trim: true
+    },
+    pincode: {
+        type: String,
+        trim: true
+    },
+    city: {
+        type: String,
+        trim: true
+    }
+}, { _id: false })
 
 const userSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
         enum: ["Mr", "Mrs", "Miss"],
+        trim: true
     },
     name: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     phone: {
         type: String,
@@ -27,11 +36,13 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        trim: true
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     address: addressSchema
 }, { timestamps: true });
