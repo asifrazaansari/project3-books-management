@@ -1,9 +1,6 @@
 const jwt = require("jsonwebtoken")
 const bookModel = require('../models/bookModel')
-const mongoose = require('mongoose')
-const isValidObjectId = (ObjectId) => {
-    return mongoose.Types.ObjectId.isValid(ObjectId)
-}
+const {isValidObjectId} = require('../validators/validator')
 
 const authentication = async function (req, res, next) {
     try {
