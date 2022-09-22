@@ -47,6 +47,7 @@ const createUser = async function (req, res) {
         if (user.title !== "Mr" && user.title !== "Mrs" && user.title !== "Miss") return res.status(400).send({ status: false, msg: "Please Enter A Valid Title Field" });
         if (!user.name) return res.status(400).send({ status: false, msg: "Please Enter Name,Name Is A Mandatory Field" });
         if (!validateName(user.name)) return res.status(400).send({ status: false, msg: "Please Enter A Valid Name" });
+        user.name.trim();
         user.name = user.name.toLowerCase()
         user.name = ConversionToProperName(user.name);
         if (!user.phone) return res.status(400).send({ status: false, msg: "Please Enter Phone,Phone Is A Mandatory Field" });
@@ -62,7 +63,7 @@ const createUser = async function (req, res) {
         };
 
         if (!user.password) return res.status(400).send({ status: false, msg: "Please Enter Password,Password Is A Mandatory Field" });
-        if (!checkPassword(user.password)) return res.status(400).send({ status: false, msg: "Please Enter A Valid Password,Password Length Should Be Minimum 8 And Maximum 15" });
+        if (!checkPassword(user.password)) return res.status(400).send({ status: false, msg: "Please Enter A Valid Password,Password Length Should Be Minimum 8 And Maximum 15 and should contain UpperCase, lowercase apl" });
 
         if (user.address) {
             if ((typeof user.address.street !== "string" && typeof user.address.street !== "undefined") || (typeof user.address.city !== "string" && typeof user.address.city !== "undefined") || (typeof user.address.pincode !== "string" && typeof user.address.pincode !== "undefined")) return res.status(400).send({ status: false, msg: "Invalid Address" });
