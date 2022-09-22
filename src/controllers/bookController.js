@@ -8,6 +8,7 @@ const today = moment()
 const createBook = async function (req, res) {
     try {
         const booksData = req.body
+        let decoded = req.decodedToken
 
         if (Object.keys(booksData).length === 0) {
             return res.status(400).send({ status: false, message: "Please enter required details in request body" })
@@ -23,8 +24,7 @@ const createBook = async function (req, res) {
 
         if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: "userId must be valid, please write in correct format" })
 
-        const validUserId = await userModel.findOne({ _id: userId })
-        if (!validUserId) return res.status(401).send({ status: false, message: "user is not valid please provide valid userId" })
+        if (decoded.userId !== userId) return res.status(401).send({ status: false, message: "user is not valid please provide valid userId" })
 
         if (!validISBN.test(ISBN)) return res.status(400).send({ status: false, message: "ISBN must be present and valid, please write in 10 or 13 digit format" })
 
