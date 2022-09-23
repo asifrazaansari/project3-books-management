@@ -4,7 +4,7 @@ const reviewSchema = new mongoose.Schema({
 
     bookId: {
         type: ObjectId,
-        ref: 'books',
+        ref: 'book',
         required: true
     },
     reviewedBy: {

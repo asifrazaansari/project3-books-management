@@ -108,9 +108,9 @@ const updateReview = async function (req, res) {
         }
 
 
-        const reviewsData = await reviewModel.findByIdAndUpdate(reviewId, { $set: req.body }, { new: true });
+        const updatedReview = await reviewModel.findByIdAndUpdate(reviewId, { $set: req.body }, { new: true });
         const updatedBook = await bookModel.findById(bookId);
-        const result = { ...updatedBook._doc, reviewsData }
+        const result = { ...updatedBook._doc, updatedReview }
 
 
         return res.status(200).send({ status: true, message: "Books List", data: result });
