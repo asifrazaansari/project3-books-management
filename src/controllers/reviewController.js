@@ -86,7 +86,9 @@ const updateReview = async function (req, res) {
 
         // ====================================Validating If the Request Body Contains Rating,Review,ReviewedBy,If It Contains Then Validating If Its In Proper Format=====================
         if (review == "") return res.status(400).send({ status: false, msg: "Review Field Should Be A Non Empty String Only" });
-        if (rating == "") return res.status(400).send({ status: false, msg: "Rating Field Should Be A Non Empty String Only" })
+        if (rating == "") return res.status(400).send({ status: false, msg: "Rating Field Should Be A Non Empty String Only" });
+        if (reviewedBy == "") return res.status(400).send({ status: false, msg: "ReviewedBy Field Should Be A Non Empty String Only" });
+        
         if (review) {
             if (typeof review !== "string") return res.status(400).send({ status: false, msg: "Review Field Should Be A Non Empty String Only" })
 
@@ -95,7 +97,7 @@ const updateReview = async function (req, res) {
             if (typeof rating !== "number" || ! /^([1-5])$/.test(rating)) return res.status(400).send({ status: false, msg: "Ratings Should Be A Number Between 1 to 5 Only" })
         };
         if (reviewedBy) {
-            if (typeof review !== "string" || !validateName(reviewedBy)) return res.status(400).send({ status: false, msg: "Please Confirm ReviewedBy Field,ReviewedBy Field Should Be A Alphabetical String Only" });
+            if (typeof reviewedBy !== "string" || !validateName(reviewedBy)) return res.status(400).send({ status: false, msg: "Please Confirm ReviewedBy Field,ReviewedBy Field Should Be A Alphabetical String Only" });
         } else {
             // ===============================If Reviewer Is Not mentioned In The Request Body We Insert It As Guest In The Request Body Below==================================
             req.body.reviewedBy = "Guest";
