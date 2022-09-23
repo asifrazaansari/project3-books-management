@@ -79,7 +79,7 @@ const updateReview = async function (req, res) {
 
 
 
-        // =====================================Checking If The BookId Coming In The Path Params Is A Valid BookId Present In The Database======================
+        // =====================================Checking If The ReviewId Coming In The Path Params Is A Valid ReviewId Present In The Database======================
         if (!validateObjectId(reviewId)) return res.status(400).send({ status: false, msg: "Please Correct the ReviewId,Its Invalid" });
         const reviewCheck = await reviewModel.findOne({ _id: reviewId, isDeleted: false });
         if (!reviewCheck) return res.status(400).send({ status: false, msg: "No Review Found For The Given ReviewId,Please Confirm The ReviewId" });
@@ -131,7 +131,7 @@ const deleteReview = async function (req, res) {
         const bookCheck = await bookModel.findOne({ _id: bookId, isDeleted: false });
         if (!bookCheck) return res.status(400).send({ status: false, msg: "No Book Found For The Given BookId,Please Confirm The BookId" });
 
-        // =====================Checking If The BookId Coming In The Path Params Is A Valid BookId Present In The Database And Is Not Deleted===========
+        // =====================Checking If The ReviewId Coming In The Path Params Is A Valid ReviewId Present In The Database And Is Not Deleted===========
         if (!validateObjectId(reviewId)) return res.status(400).send({ status: false, msg: "Please Correct the ReviewId,Its Invalid" });
         const reviewCheck = await reviewModel.findOne({ _id: reviewId, isDeleted: false });
 
