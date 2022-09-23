@@ -24,7 +24,7 @@ const createBook = async function (req, res) {
 
         if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: "userId must be valid, please write in correct format" })
 
-        if (decoded.userId !== userId) return res.status(401).send({ status: false, message: "user is not valid please provide valid userId" })
+        if (decoded.userId !== userId) return res.status(401).send({ status: false, message: "You are not authorised, provide your's userId" })
 
         if (!validISBN.test(ISBN)) return res.status(400).send({ status: false, message: "ISBN must be present and valid, please write in 10 or 13 digit format" })
 
@@ -40,10 +40,8 @@ const createBook = async function (req, res) {
         } else {
             booksData.releasedAt = today.format('YYYY-MM-DD')
         }
+        booksData.isDeleted = false
 
-        if (typeof isDeleted !== Boolean) {
-            booksData.isDeleted = false
-        }
 
         const book = await bookModel.create(booksData)
         return res.status(201).send({ status: false, message: "Book Created successfully", data: book })
@@ -171,11 +169,12 @@ const deleteById = async function (req, res) {
         const bookId = req.params.bookId
         if (!isValidObjectId(bookId)) return res.status(400).send({ status: false, message: "bookId must be present and valid, please write in correct format" })
         let book = await bookModel.findById(bookId)
+        if(!book) return res.status(404).send({ status: false, message: "book not found" })
         if (book.isDeleted === true) return res.status(400).send({ status: false, message: "This book is already deleted." })
 
         await bookModel.findOneAndUpdate(
             { _id: bookId },
-            { isDeleted: true, deletedAt: Date.now() }
+            { $set: { isDeleted: true, deletedAt: Date.now() } }
         )
         return res.status(200).send({ status: true, message: "Book deleted succesfully." })
     } catch (err) {
