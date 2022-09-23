@@ -1,41 +1,12 @@
 const userModel = require("../models/userModel");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
-
-
-function validateName($name) {
-    var nameReg = /^[A-Za-z ]*$/;
-    if (!nameReg.test($name)) {
-        return false;
-    } else {
-        return true;
-    }
-};
+const { ConversionToProperName, validateMobile, validateName, checkPassword } = require("../validators/validator");
 
 
 
-function ConversionToProperName(name) {
-
-    let name2 = name.trim().toLowerCase().split(" ");
-    return name2.map((x) => { return x[0].toUpperCase() + x.substring(1) }).join(" ");
-
-}
 
 
-function validateMobile($mobile) {
-    var mobileReg = /^([0|\+[0-9]{1,5})?([7-9][0-9]{9})$/;
-    if (!mobileReg.test($mobile)) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
-
-function checkPassword(str) {
-    var re = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,15}$/;
-    return re.test(str);
-}
 
 
 const createUser = async function (req, res) {
@@ -79,7 +50,7 @@ const createUser = async function (req, res) {
                 }
             } if (user.address.pincode) {
                 if (user.address.pincode == "") return res.status(400).send({ status: false, msg: "Pincode Should Be A Non Empty String Of Numbers and Should Have 6 Digits" })
-                if (typeof user.address.pincode !== "string"||!/^[1-9][0-9]{5}$/.test(user.address.pincode)) {
+                if (typeof user.address.pincode !== "string" || !/^[1-9][0-9]{5}$/.test(user.address.pincode)) {
                     return res.status(400).send({ status: false, msg: "Pincode Should Be A Non Empty String Of Numbers and Should have 6 digits" })
                 }
                 let savedUser = await userModel.create(user);

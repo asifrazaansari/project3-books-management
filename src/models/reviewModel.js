@@ -4,12 +4,12 @@ const reviewSchema = new mongoose.Schema({
 
     bookId: {
         type: ObjectId,
-        ref: 'books'
+        ref: 'books',
+        required: true
     },
     reviewedBy: {
         type: String,
         required: true,
-        default: "Guest",
         trim: true
     },
     reviewedAt: {
