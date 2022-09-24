@@ -135,7 +135,8 @@ const deleteReview = async function (req, res) {
 
         // =====================Checking If The ReviewId Coming In The Path Params Is A Valid ReviewId Present In The Database And Is Not Deleted===========
         if (!validateObjectId(reviewId)) return res.status(400).send({ status: false, msg: "Please Correct the ReviewId,Its Invalid" });
-        const reviewCheck = await reviewModel.findOne({ _id: reviewId, isDeleted: false });
+        const reviewCheck = await reviewModel.findOne({ _id: reviewId, isDeleted: false });;
+        if(!reviewCheck)return res.status(400).send({status:false,msg:"No review found"})
 
         // =======================Marking IsDeleted Key Of The Review Document As True=====================================================================
         const deletedReview = await reviewModel.findByIdAndUpdate({ _id: reviewId }, { $set: { isDeleted: true } });
