@@ -5,7 +5,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 const bookSchema = new mongoose.Schema({
     title: { type: String, required: true, unique: true, trim: true },
     excerpt: { type: String, required: true, trim: true },
-    userId: { type: ObjectId, required: true, ref: "User", trim: true },
+    userId: { type: ObjectId, required: true, ref: "user", trim: true },
     ISBN: { type: String, required: true, unique: true, trim: true },
     category: { type: String, required: true, trim: true },
     subcategory: { type: String, required: true, trim: true },
@@ -16,4 +16,4 @@ const bookSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-module.exports = mongoose.model("Book", bookSchema)
+module.exports = mongoose.model("book", bookSchema)
