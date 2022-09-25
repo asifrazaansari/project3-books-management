@@ -19,7 +19,6 @@ const createBook = async function (req, res) {
         if (!stringChecking(title)) return res.status(400).send({ status: false, message: "title must be present with non-empty string" })
         const duplicateTitle = await bookModel.findOne({ title: title })
         if (duplicateTitle) return res.status(400).send({ status: false, message: "Title must be unique" })
-        booksData.title = ConversionToProperName(title)
 
         if (!stringChecking(excerpt)) return res.status(400).send({ status: false, message: "excerpt must be present with non-empty string" })
 

@@ -12,19 +12,19 @@ const createReview = async function (req, res) {
         const { reviewedBy, review, rating, bookId, reviewedAt } = reviewDetails;
 
         // =====================Checking If The BookId Coming In The Path Params Is A Valid BookId Present In The Database===========
-        if (!validateObjectId(bookPId)) return res.status(400).send({ status: false, msg: "Please Correct the bookId, Its Invalid" });
-        if(bookId){
+        if (!validateObjectId(bookPId)) return res.status(400).send({ status: false, message: "Please Correct the bookId, Its Invalid" });
+        if (bookId) {
             if (bookPId !== bookId) return res.status(400).send({ status: false, message: "params bookId as well as body bookId must be same" })
             reviewDetails.bookId = bookPId
-        }else{
+        } else {
             reviewDetails.bookId = bookPId
         }
         const bookCheck = await bookModel.findOne({ _id: bookPId, isDeleted: false });
-        if (!bookCheck) return res.status(404).send({ status: false, msg: "No Book Found For The Given BookId, please Confirm The bookId" });
+        if (!bookCheck) return res.status(404).send({ status: false, message: "No Book Found For The Given BookId, please Confirm The bookId" });
 
         // ====================Validating ReviewedBy Field Coming In The Request Object And Making It A Grammatically Correct Name ===================================
         if (reviewedBy) {
-            if (!validateName(reviewedBy)) return res.status(400).send({ status: false, msg: "Please Confirm ReviewedBy Field, ReviewedBy Field Should Be A Alphabetical String Only" })
+            if (!validateName(reviewedBy)) return res.status(400).send({ status: false, message: "Please Confirm ReviewedBy Field, ReviewedBy Field Should Be A Alphabetical String Only" })
             reviewDetails.reviewedBy = ConversionToProperName(reviewedBy);
         } else {
             // =====================If Reviewer Is Not mentioned In The Request Body We Insert It As Guest In The Request Body Below================
@@ -40,10 +40,10 @@ const createReview = async function (req, res) {
         //reviewDetails.reviewedAt = today.format();
 
         // ==========================================================================================================================================================================================
-        if (!rating) return res.status(400).send({ status: false, msg: "Please Enter Ratings Data, Its A Mandatory Field" });
-        if (typeof rating !== "number" || ! /^([1-5])$/.test(rating)) return res.status(400).send({ status: false, msg: "Ratings Should Be A Number Between 1 to 5 Only" })
+        if (!rating) return res.status(400).send({ status: false, message: "Please Enter Ratings Data, Its A Mandatory Field" });
+        if (typeof rating !== "number" || ! /^([1-5])$/.test(rating)) return res.status(400).send({ status: false, message: "Ratings Should Be A Number Between 1 to 5 Only" })
         if (review) {
-            if (!stringChecking(review)) return res.status(400).send({ status: false, msg: "Review Field Should Be A String Only" })
+            if (!stringChecking(review)) return res.status(400).send({ status: false, message: "Review Field Should Be A String Only" })
         };
 
         // ===============================================Adding A IsDeleted Key In The Request Object With A Default False Value Below==============================================
@@ -59,7 +59,7 @@ const createReview = async function (req, res) {
         return res.status(201).send({ status: true, message: 'Success', data: result });
     }
     catch (error) {
-        return res.status(500).send({ status: false, msg: error.message });
+        return res.status(500).send({ status: false, message: error.message });
     }
 }
 
@@ -75,36 +75,36 @@ const updateReview = async function (req, res) {
         const { review, rating, reviewedBy } = data;
 
         // =============================Checking If The BookId Coming In The Path Params Is A Valid BookId Present In The Database===================================================
-        if (Object.keys(data).length == 0) return res.status(400).send({ status: false, msg: "Request Body Can't Be Blank" });
-        if (!validateObjectId(bookId)) return res.status(400).send({ status: false, msg: "Please Correct the BookId, It's Invalid" });
+        if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "Request Body Can't Be Blank" });
+        if (!validateObjectId(bookId)) return res.status(400).send({ status: false, message: "Please Correct the BookId, It's Invalid" });
         const bookCheck = await bookModel.findOne({ _id: bookId, isDeleted: false });
-        if (!bookCheck) return res.status(400).send({ status: false, msg: "No Book Found For The Given BookId, Please Confirm The BookId" });
+        if (!bookCheck) return res.status(400).send({ status: false, message: "No Book Found For The Given BookId, Please Confirm The BookId" });
 
 
 
         // =====================================Checking If The ReviewId Coming In The Path Params Is A Valid ReviewId Present In The Database======================
-        if (!validateObjectId(reviewId)) return res.status(400).send({ status: false, msg: "Please Correct the ReviewId, Its Invalid" });
+        if (!validateObjectId(reviewId)) return res.status(400).send({ status: false, message: "Please Correct the ReviewId, Its Invalid" });
         const reviewCheck = await reviewModel.findOne({ _id: reviewId, isDeleted: false });
-        if (!reviewCheck) return res.status(400).send({ status: false, msg: "No Review Found For The Given ReviewId, Please Confirm The ReviewId" });
+        if (!reviewCheck) return res.status(400).send({ status: false, message: "No Review Found For The Given ReviewId, Please Confirm The ReviewId" });
 
         // ====================================Validating If the Request Body Contains Rating,Review,ReviewedBy,If It Contains Then Validating If Its In Proper Format=====================
 
         if (review) {
-            if (!stringChecking(review)) return res.status(400).send({ status: false, msg: "Review Field Should Be A Non Empty String Only" })
+            if (!stringChecking(review)) return res.status(400).send({ status: false, message: "Review Field Should Be A Non Empty String Only" })
 
         };
         if (rating) {
-            if (typeof rating !== "number" || ! /^([1-5])$/.test(rating)) return res.status(400).send({ status: false, msg: "Ratings Should Be A Number Between 1 to 5 Only" })
+            if (typeof rating !== "number" || ! /^([1-5])$/.test(rating)) return res.status(400).send({ status: false, message: "Ratings Should Be A Number Between 1 to 5 Only" })
         };
         if (reviewedBy) {
-            if (!stringChecking(reviewedBy) || !validateName(reviewedBy)) return res.status(400).send({ status: false, msg: "Please Confirm ReviewedBy Field, ReviewedBy Field Should Be A Alphabetical String Only" });
+            if (!stringChecking(reviewedBy) || !validateName(reviewedBy)) return res.status(400).send({ status: false, message: "Please Confirm ReviewedBy Field, ReviewedBy Field Should Be A Alphabetical String Only" });
         } else {
             // ===============================If Reviewer Is Not mentioned In The Request Body We Insert It As Guest In The Request Body Below==================================
             req.body.reviewedBy = "Guest";
         }
         // ============================================Validating If The Request Body Doesnt Have Random fields Other Than Rating,reviewedBy And review=============================
         if (!rating && !reviewedBy && !review && Object.keys(req.body).length > 0) {
-            return res.status(400).send({ status: false, msg: "Request Body Will Contain Only Data For rating, reviewedBy & review" })
+            return res.status(400).send({ status: false, message: "Request Body Will Contain Only Data For rating, reviewedBy & review" })
         }
 
 
@@ -116,7 +116,7 @@ const updateReview = async function (req, res) {
         return res.status(200).send({ status: true, message: "Books List", data: result });
     }
     catch (error) {
-        return res.status(500).send({ status: false, msg: error.message });
+        return res.status(500).send({ status: false, message: error.message });
     }
 }
 
@@ -129,14 +129,14 @@ const deleteReview = async function (req, res) {
 
 
         // =====================Checking If The BookId Coming In The Path Params Is A Valid BookId Present In The Database And Is Not Deleted===========
-        if (!validateObjectId(bookId)) return res.status(400).send({ status: false, msg: "Please Correct the BookId, Its Invalid" });
+        if (!validateObjectId(bookId)) return res.status(400).send({ status: false, message: "Please Correct the BookId, Its Invalid" });
         const bookCheck = await bookModel.findOne({ _id: bookId, isDeleted: false });
-        if (!bookCheck) return res.status(404).send({ status: false, msg: "No Book Found For The Given BookId, Please Confirm The BookId" });
+        if (!bookCheck) return res.status(404).send({ status: false, message: "No Book Found For The Given BookId, Please Confirm The BookId" });
 
         // =====================Checking If The ReviewId Coming In The Path Params Is A Valid ReviewId Present In The Database And Is Not Deleted===========
-        if (!validateObjectId(reviewId)) return res.status(400).send({ status: false, msg: "Please Correct the ReviewId, Its Invalid" });
+        if (!validateObjectId(reviewId)) return res.status(400).send({ status: false, message: "Please Correct the ReviewId, Its Invalid" });
         const reviewCheck = await reviewModel.findOne({ _id: reviewId, isDeleted: false });;
-        if (!reviewCheck) return res.status(404).send({ status: false, msg: "No review found" })
+        if (!reviewCheck) return res.status(404).send({ status: false, message: "No review found" })
 
         // =======================Marking IsDeleted Key Of The Review Document As True=====================================================================
         const deletedReview = await reviewModel.findByIdAndUpdate({ _id: reviewId }, { $set: { isDeleted: true } });
@@ -144,10 +144,10 @@ const deleteReview = async function (req, res) {
         // ========================Since The Review Of The Book Is Marked Deleted,We Will Now Update The Book Documents Review Count By Decreasing It By One=========
         const updatedBook = await bookModel.findByIdAndUpdate({ _id: bookId }, { $inc: { reviews: -1 } });
 
-        return res.status(200).send({ status: true, msg: "Review Deleted Successfully" })
+        return res.status(200).send({ status: true, message: "Review Deleted Successfully" })
     }
     catch (error) {
-        return res.status(500).send({ status: false, msg: error.message });
+        return res.status(500).send({ status: false, message: error.message });
     }
 
 }
