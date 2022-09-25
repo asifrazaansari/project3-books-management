@@ -12,12 +12,15 @@ const createReview = async function (req, res) {
         const reqParams = req.params;
         const { bookId } = reqParams;
         const reviewDetails = req.body;
-        const { reviewedBy, review, rating, reviewedAt, isDeleted } = reviewDetails;
+        const { reviewedBy, review, rating, reviewedAt, isDeleted ,bodyBookId} = reviewDetails;
 
         // =====================Checking If The BookId Coming In The Path Params Is A Valid BookId Present In The Database===========
         if (!validateObjectId(bookId)) return res.status(400).send({ status: false, msg: "Please Correct the BookId,Its Invalid" });
         const bookCheck = await bookModel.findOne({ _id: bookId, isDeleted: false });
-        if (!bookCheck) return res.status(400).send({ status: false, msg: "No Book Found For The Given BookId,Please Confirm The BookId" });
+        if (!bookCheck) return res.status(404).send({ status: false, msg: "No Book Found For The Given BookId,Please Confirm The BookId" });
+        if(bodyBookId){
+        if(!validateObjectId(bodyBookId))return res.status(400).send({ status: false, msg: "Please Correct the BookId,Its Invalid" })
+        }
         // ================================If Request Body Doesnt Contain BookId We Insert It In The Request Object Below==========
         reviewDetails.bookId = bookId;
 
@@ -83,7 +86,7 @@ const updateReview = async function (req, res) {
         if (!reviewCheck) return res.status(400).send({ status: false, msg: "No Review Found For The Given ReviewId,Please Confirm The ReviewId" });
 
         // ====================================Validating If the Request Body Contains Rating,Review,ReviewedBy,If It Contains Then Validating If Its In Proper Format=====================
-        
+
         if (review) {
             if (stringChecking(review)) return res.status(400).send({ status: false, msg: "Review Field Should Be A Non Empty String Only" })
 
@@ -92,7 +95,7 @@ const updateReview = async function (req, res) {
             if (typeof rating !== "number" || ! /^([1-5])$/.test(rating)) return res.status(400).send({ status: false, msg: "Ratings Should Be A Number Between 1 to 5 Only" })
         };
         if (reviewedBy) {
-            if (stringChecking(reviewedBy)|| !validateName(reviewedBy)) return res.status(400).send({ status: false, msg: "Please Confirm ReviewedBy Field,ReviewedBy Field Should Be A Alphabetical String Only" });
+            if (stringChecking(reviewedBy) || !validateName(reviewedBy)) return res.status(400).send({ status: false, msg: "Please Confirm ReviewedBy Field,ReviewedBy Field Should Be A Alphabetical String Only" });
         } else {
             // ===============================If Reviewer Is Not mentioned In The Request Body We Insert It As Guest In The Request Body Below==================================
             req.body.reviewedBy = "Guest";
