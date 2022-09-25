@@ -15,6 +15,7 @@ const createReview = async function (req, res) {
         if (!validateObjectId(bookPId) || !validateObjectId(bookId)) return res.status(400).send({ status: false, msg: "Please Correct the BookId in params as well as in body, Its Invalid" });
         if(bookId){
             if (bookPId !== bookId) return res.status(400).send({ status: false, message: "params bookId as well as body bookId must be same" })
+            reviewDetails.bookId = bookPId
         }else{
             reviewDetails.bookId = bookPId
         }
