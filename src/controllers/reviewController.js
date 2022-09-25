@@ -13,7 +13,11 @@ const createReview = async function (req, res) {
 
         // =====================Checking If The BookId Coming In The Path Params Is A Valid BookId Present In The Database===========
         if (!validateObjectId(bookPId) || !validateObjectId(bookId)) return res.status(400).send({ status: false, msg: "Please Correct the BookId in params as well as in body, Its Invalid" });
-        if (bookPId !== bookId) return res.status(400).send({ status: false, message: "params bookId as well as body bookId must be same" })
+        if(bookId){
+            if (bookPId !== bookId) return res.status(400).send({ status: false, message: "params bookId as well as body bookId must be same" })
+        }else{
+            reviewDetails.bookId = bookPId
+        }
         const bookCheck = await bookModel.findOne({ _id: bookPId, isDeleted: false });
         if (!bookCheck) return res.status(404).send({ status: false, msg: "No Book Found For The Given BookId, please Confirm The bookId" });
 
