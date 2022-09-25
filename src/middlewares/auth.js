@@ -4,7 +4,7 @@ const {validateObjectId} = require('../validators/validator')
 
 const authentication = async function (req, res, next) {
     try {
-        let token = req.headers["x-auth-key"]
+        let token = req.headers["x-api-key"]
 
         if (!token) return res.status(400).send({ status: false, msg: "Token must be present in the request header" })
 
@@ -13,7 +13,7 @@ const authentication = async function (req, res, next) {
                 return res.status(401).send({ status: false, msg: "Token is Invalid" })
             }
             else {
-                res.setHeader("x-auth-key", token)
+                res.setHeader("x-api-key", token)
                 req.decodedToken = decodedToken
                 next()
             }
