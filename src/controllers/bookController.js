@@ -14,7 +14,7 @@ const createBook = async function (req, res) {
             return res.status(400).send({ status: false, message: "Please enter required details in request body" })
         }
 
-        const { title, excerpt, userId, ISBN, category, subcategory, releasedAt, isDeleted } = booksData
+        const { title, excerpt, userId, ISBN, category, subcategory, releasedAt, reviews } = booksData
 
         if (!stringChecking(title)) return res.status(400).send({ status: false, message: "title must be present with non-empty string" })
         const duplicateTitle = await bookModel.findOne({ title: title })
@@ -22,9 +22,11 @@ const createBook = async function (req, res) {
 
         if (!stringChecking(excerpt)) return res.status(400).send({ status: false, message: "excerpt must be present with non-empty string" })
 
+        if (!stringChecking(userId)) return res.status(400).send({ status: false, message: "userId must be present" })
+
         if (!validateObjectId(userId)) return res.status(400).send({ status: false, message: "userId must be valid, please write in correct format" })
 
-        if (decoded.userId !== userId) return res.status(401).send({ status: false, message: "You are not authorised, provide your's userId" })
+        if (decoded.userId !== userId) return res.status(403).send({ status: false, message: "You are not authorised, provide your's userId" })
 
         if (!validISBN.test(ISBN)) return res.status(400).send({ status: false, message: "ISBN must be present and valid, please write in  13 digit format" })
 
@@ -40,11 +42,14 @@ const createBook = async function (req, res) {
         } else {
             booksData.releasedAt = today.format('YYYY-MM-DD')
         }
+        if(reviews){
+            booksData.reviews = 0
+        }
         booksData.isDeleted = false
 
 
         const book = await bookModel.create(booksData)
-        return res.status(201).send({ status: false, message: "Book Created successfully", data: book })
+        return res.status(201).send({ status: true, message: "Book Created successfully", data: book })
 
     } catch (error) {
         return res.status(500).send({ status: false, error: error.message })
@@ -61,15 +66,16 @@ const getBooks = async function (req, res) {
             if (getData.length === 0) {
                 return res.status(404).send({ status: false, message: "No book found" })
             }
-            return res.status(200).send({ status: false, message: "Books list", count: getData.length, data: getData })
+            return res.status(200).send({ status: true, message: "Books list", count: getData.length, data: getData })
         } else {
 
             const { userId, category, subcategory } = booksData
             const filter = {}
 
             if (userId) {
+                if (!validateObjectId(userId)) return res.status(400).send({ status: false, message: "userId must be valid, please write in correct format" })
                 const usersId = await userModel.findOne({ _id: userId })
-                if (!usersId) return res.status(400).send({ status: false, message: "Provide correct userId" })
+                if (!usersId) return res.status(400).send({ status: false, message: "No user found, provide correct userId" })
                 filter.userId = usersId
             }
 
@@ -143,7 +149,7 @@ const updateBook = async function (req, res) {
             if (ISBN) {
                 if (!validISBN.test(ISBN)) return res.status(400).send({ status: false, message: "This ISBN is not valid" })
                 const duplicateISBN = await bookModel.findOne({ ISBN: ISBN })
-                if (duplicateISBN) return res.status(400).send({ status: false, message: "ISBN is not unique." })
+                if (duplicateISBN) return res.status(400).send({ status: false, message: "ISBN must be unique." })
             }
             if (releasedAt) {
                 if (!validDate.test(releasedAt)) return res.status(400).send({ status: false, message: 'Please enter the releasedAt date in "YYYY-MM-DD" format' })
