@@ -15,7 +15,7 @@ mongoose.connect("mongodb+srv://vipul-functionup:dHQN7pHckdlNc5gX@cluster0.hh8ax
 app.use('/', route);
 
 app.use(function (req, res){
-    return res.status(400).send({status: false, message: "Path not found, please provide path"})
+    return res.status(400).send({status: false, message: "Path not found, please provide correct path"})
 })
 
 
