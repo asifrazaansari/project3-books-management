@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bookModel = require("../models/bookModel");
 const reviewModel = require("../models/reviewModel");
 const validator = require("validator")
-const { validateObjectId, ConversionToProperName, validateName } = require("../validators/validator");
+const { validateObjectId, ConversionToProperName, validateName, stringChecking } = require("../validators/validator");
 const moment = require("moment");
 const today = moment();
 
@@ -23,9 +23,8 @@ const createReview = async function (req, res) {
 
 
         // ====================Validating ReviewedBy Field Coming In The Request Object And Making It A Grammatically Correct Name ===================================
-        if (reviewedBy == "") return res.status(400).send({ status: false, msg: "Please Confirm ReviewedBy Field,ReviewedBy Field Should Be A Alphabetical String Only" })
         if (reviewedBy) {
-            if (typeof reviewedBy !== "string" || !validateName(reviewedBy)) return res.status(400).send({ status: false, msg: "Please Confirm ReviewedBy Field,ReviewedBy Field Should Be A Alphabetical String Only" })
+            if (stringChecking(reviewedBy) || !validateName(reviewedBy)) return res.status(400).send({ status: false, msg: "Please Confirm ReviewedBy Field,ReviewedBy Field Should Be A Alphabetical String Only" })
             req.body.reviewedBy = ConversionToProperName(reviewedBy);
         } else {
             // =====================If Reviewer Is Not mentioned In The Request Body We Insert It As Guest In The Request Body Below================
@@ -39,8 +38,7 @@ const createReview = async function (req, res) {
         if (!rating) return res.status(400).send({ status: false, msg: "Please Enter Ratings Data,Its A Mandatory Field" });
         if (typeof rating !== "number" || ! /^([1-5])$/.test(rating)) return res.status(400).send({ status: false, msg: "Ratings Should Be A Number Between 1 to 5 Only" })
         if (review) {
-            if (typeof review !== "string") return res.status(400).send({ status: false, msg: "Review Field Should Be A String Only" })
-
+            if (stringChecking(review)) return res.status(400).send({ status: false, msg: "Review Field Should Be A String Only" })
         };
 
         // ===============================================Adding A IsDeleted Key In The Request Object With A Default False Value Below==============================================
@@ -85,19 +83,16 @@ const updateReview = async function (req, res) {
         if (!reviewCheck) return res.status(400).send({ status: false, msg: "No Review Found For The Given ReviewId,Please Confirm The ReviewId" });
 
         // ====================================Validating If the Request Body Contains Rating,Review,ReviewedBy,If It Contains Then Validating If Its In Proper Format=====================
-        if (review == "") return res.status(400).send({ status: false, msg: "Review Field Should Be A Non Empty String Only" });
-        if (rating == "") return res.status(400).send({ status: false, msg: "Rating Field Should Be A Non Empty String Only" });
-        if (reviewedBy == "") return res.status(400).send({ status: false, msg: "ReviewedBy Field Should Be A Non Empty String Only" });
         
         if (review) {
-            if (typeof review !== "string") return res.status(400).send({ status: false, msg: "Review Field Should Be A Non Empty String Only" })
+            if (stringChecking(review)) return res.status(400).send({ status: false, msg: "Review Field Should Be A Non Empty String Only" })
 
         };
         if (rating) {
             if (typeof rating !== "number" || ! /^([1-5])$/.test(rating)) return res.status(400).send({ status: false, msg: "Ratings Should Be A Number Between 1 to 5 Only" })
         };
         if (reviewedBy) {
-            if (typeof reviewedBy !== "string" || !validateName(reviewedBy)) return res.status(400).send({ status: false, msg: "Please Confirm ReviewedBy Field,ReviewedBy Field Should Be A Alphabetical String Only" });
+            if (stringChecking(reviewedBy)|| !validateName(reviewedBy)) return res.status(400).send({ status: false, msg: "Please Confirm ReviewedBy Field,ReviewedBy Field Should Be A Alphabetical String Only" });
         } else {
             // ===============================If Reviewer Is Not mentioned In The Request Body We Insert It As Guest In The Request Body Below==================================
             req.body.reviewedBy = "Guest";
@@ -136,7 +131,7 @@ const deleteReview = async function (req, res) {
         // =====================Checking If The ReviewId Coming In The Path Params Is A Valid ReviewId Present In The Database And Is Not Deleted===========
         if (!validateObjectId(reviewId)) return res.status(400).send({ status: false, msg: "Please Correct the ReviewId,Its Invalid" });
         const reviewCheck = await reviewModel.findOne({ _id: reviewId, isDeleted: false });;
-        if(!reviewCheck)return res.status(400).send({status:false,msg:"No review found"})
+        if (!reviewCheck) return res.status(400).send({ status: false, msg: "No review found" })
 
         // =======================Marking IsDeleted Key Of The Review Document As True=====================================================================
         const deletedReview = await reviewModel.findByIdAndUpdate({ _id: reviewId }, { $set: { isDeleted: true } });
