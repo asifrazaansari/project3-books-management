@@ -12,7 +12,7 @@ const createReview = async function (req, res) {
         const { reviewedBy, review, rating, bookId, reviewedAt } = reviewDetails;
 
         // =====================Checking If The BookId Coming In The Path Params Is A Valid BookId Present In The Database===========
-        if (!validateObjectId(bookPId) || !validateObjectId(bookId)) return res.status(400).send({ status: false, msg: "Please Correct the BookId in params as well as in body, Its Invalid" });
+        if (!validateObjectId(bookPId)) return res.status(400).send({ status: false, msg: "Please Correct the bookId, Its Invalid" });
         if(bookId){
             if (bookPId !== bookId) return res.status(400).send({ status: false, message: "params bookId as well as body bookId must be same" })
             reviewDetails.bookId = bookPId
@@ -25,7 +25,7 @@ const createReview = async function (req, res) {
         // ====================Validating ReviewedBy Field Coming In The Request Object And Making It A Grammatically Correct Name ===================================
         if (reviewedBy) {
             if (!validateName(reviewedBy)) return res.status(400).send({ status: false, msg: "Please Confirm ReviewedBy Field, ReviewedBy Field Should Be A Alphabetical String Only" })
-            req.body.reviewedBy = ConversionToProperName(reviewedBy);
+            reviewDetails.reviewedBy = ConversionToProperName(reviewedBy);
         } else {
             // =====================If Reviewer Is Not mentioned In The Request Body We Insert It As Guest In The Request Body Below================
             reviewDetails.reviewedBy = "Guest";
@@ -53,7 +53,7 @@ const createReview = async function (req, res) {
         const createdReview = await reviewModel.create(reviewDetails);
 
         // ==================================================When The Book Review Gets Successfully Created,We Update The Reviews Count Of The Book Below===============================
-        const bookWithReview = await bookModel.findByIdAndUpdate(bookId, { $inc: { reviews: 1 } }, { new: true });
+        const bookWithReview = await bookModel.findByIdAndUpdate(bookPId, { $inc: { reviews: 1 } }, { new: true });
         const result = { ...bookWithReview._doc, createdReview }
 
         return res.status(201).send({ status: true, message: 'Success', data: result });
