@@ -1,7 +1,7 @@
 const userModel = require('../models/userModel')
 const bookModel = require('../models/bookModel')
 const reviewModel = require('../models/reviewModel')
-const { stringChecking, isValidObjectId, validISBN, validDate } = require('../validators/validator')
+const { stringChecking, validateObjectId, validISBN, validDate } = require('../validators/validator')
 const moment = require('moment');
 const today = moment()
 
@@ -22,11 +22,11 @@ const createBook = async function (req, res) {
 
         if (!stringChecking(excerpt)) return res.status(400).send({ status: false, message: "excerpt must be present with non-empty string" })
 
-        if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: "userId must be valid, please write in correct format" })
+        if (!validateObjectId(userId)) return res.status(400).send({ status: false, message: "userId must be valid, please write in correct format" })
 
         if (decoded.userId !== userId) return res.status(401).send({ status: false, message: "You are not authorised, provide your's userId" })
 
-        if (!validISBN.test(ISBN)) return res.status(400).send({ status: false, message: "ISBN must be present and valid, please write in 10 or 13 digit format" })
+        if (!validISBN.test(ISBN)) return res.status(400).send({ status: false, message: "ISBN must be present and valid, please write in  13 digit format" })
 
         const duplicateISBN = await bookModel.findOne({ ISBN: ISBN })
         if (duplicateISBN) return res.status(400).send({ status: false, message: "ISBN must be unique" })
@@ -102,7 +102,7 @@ const getBookById = async function (req, res) {
     try {
         const bookId = req.params.bookId
 
-        if (!isValidObjectId(bookId)) return res.status(400).send({ status: false, message: "bookId must be present and  valid, please write in correct format" })
+        if (!validateObjectId(bookId)) return res.status(400).send({ status: false, message: "bookId must be present and  valid, please write in correct format" })
 
         const bookDetails = await bookModel.findById(bookId).lean()
         if (!bookDetails) return res.status(404).send({ status: false, message: "No book found in the database." })
@@ -122,7 +122,7 @@ const updateBook = async function (req, res) {
     try {
         const bookId = req.params.bookId
 
-        if (!isValidObjectId(bookId)) return res.status(400).send({ status: false, message: "bookId must be present and  valid, please write in correct format" })
+        if (!validateObjectId(bookId)) return res.status(400).send({ status: false, message: "bookId must be present and  valid, please write in correct format" })
 
         const book = await bookModel.findById(bookId)
         if (book.isDeleted === true) return res.status(400).send({ status: false, message: "This book is already deleted." })
@@ -167,7 +167,7 @@ const updateBook = async function (req, res) {
 const deleteById = async function (req, res) {
     try {
         const bookId = req.params.bookId
-        if (!isValidObjectId(bookId)) return res.status(400).send({ status: false, message: "bookId must be present and valid, please write in correct format" })
+        if (!validateObjectId(bookId)) return res.status(400).send({ status: false, message: "bookId must be present and valid, please write in correct format" })
         let book = await bookModel.findById(bookId)
         if(!book) return res.status(404).send({ status: false, message: "book not found" })
         if (book.isDeleted === true) return res.status(400).send({ status: false, message: "This book is already deleted." })
