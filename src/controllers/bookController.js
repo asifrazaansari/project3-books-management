@@ -1,7 +1,7 @@
 const userModel = require('../models/userModel')
 const bookModel = require('../models/bookModel')
 const reviewModel = require('../models/reviewModel')
-const { stringChecking, validateObjectId, validISBN, validDate, ConversionToProperName } = require('../validators/validator')
+const { stringChecking, validateObjectId, validISBN, validDate} = require('../validators/validator')
 const moment = require('moment');
 const today = moment()
 
