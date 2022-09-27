@@ -7,15 +7,16 @@ const route = require('./routes/route.js');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-mongoose.connect("mongodb+srv://vipul-functionup:dHQN7pHckdlNc5gX@cluster0.hh8ax.mongodb.net/group30Database", { useNewUrlParser: true })
+mongoose.connect("mongodb+srv://vipul-functionup:dHQN7pHckdlNc5gX@cluster0.hh8ax.mongodb.net/group30Database",
+    { useNewUrlParser: true })
     .then(() => console.log("MongoDb is connected"))
     .catch(err => console.log(err))
 
 
 app.use('/', route);
 
-app.use(function (req, res){
-    return res.status(400).send({status: false, message: "Path not found, please provide correct path"})
+app.use(function (req, res) {
+    return res.status(400).send({ status: false, message: "Path not found, please provide correct path" })
 })
 
 

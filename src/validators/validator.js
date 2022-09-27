@@ -1,5 +1,5 @@
 const stringChecking = function (data) {
-    if (typeof data !== 'string') {
+    if (typeof data !== 'string' || data === undefined) {
         return false;
     } else if (typeof data === 'string' && data.trim().length === 0) {
         return false;
@@ -22,7 +22,7 @@ function validateObjectId(id) {
 
 
 function validateName($name) {
-    var nameReg = /^[A-Za-z ]*$/;
+    var nameReg = /^[A-Za-z][A-Za-z\'\-]+([\ A-Za-z][A-Za-z\'\-]+)*/;
     if (!nameReg.test($name)) {
         return false;
     } else {
@@ -33,14 +33,14 @@ function validateName($name) {
 
 function ConversionToProperName(name) {
 
-    const name2 = name.trim().toLowerCase().split(" ");
+    let name2 = name.trim().toLowerCase().split(" ");
     return name2.map((x) => { return x[0].toUpperCase() + x.substring(1) }).join(" ");
 
 }
 
 
 function validateMobile($mobile) {
-    var mobileReg = /^([0|\+[0-9]{1,5})?([7-9][0-9]{9})$/;
+    var mobileReg = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
     if (!mobileReg.test($mobile)) {
         return false;
     } else {
@@ -48,10 +48,11 @@ function validateMobile($mobile) {
     }
 }
 
+const isvalidEmail = /^\s*[a-zA-Z0-9]+([\.\-\_\+][a-zA-Z0-9]+)*@[a-zA-Z]+([\.\-\_][a-zA-Z]+)*(\.[a-zA-Z]{2,3})+\s*$/
 
 function checkPassword(str) {
     var re = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,15}$/;
     return re.test(str);
 }
 
-module.exports = { stringChecking, validISBN, validDate, validateObjectId, validateName, ConversionToProperName, checkPassword, validateMobile }
+module.exports = { stringChecking, validISBN, validDate, validateObjectId, validateName, ConversionToProperName, isvalidEmail, checkPassword, validateMobile }
