@@ -14,7 +14,7 @@ const createBook = async function (req, res) {
             return res.status(400).send({ status: false, message: "Please enter required details in request body" })
         }
 
-        const { title, excerpt, userId, ISBN, category, subcategory, releasedAt, reviews } = booksData
+        const { title, excerpt, userId, ISBN, category, subcategory, releasedAt, reviews, bookCover } = booksData
 
         if (!stringChecking(title)) return res.status(400).send({ status: false, message: "title must be present with non-empty string" })
         const duplicateTitle = await bookModel.findOne({ title: title })
@@ -36,6 +36,8 @@ const createBook = async function (req, res) {
         if (!stringChecking(category)) return res.status(400).send({ status: false, message: "category must be present with non-empty string" })
 
         if (!stringChecking(subcategory)) return res.status(400).send({ status: false, message: "subcategory must be present with non-empty string" })
+
+        if (!stringChecking(bookCover)) return res.status(400).send({ status: false, message: "bookCover must be present with non-empty string" })
 
         if (typeof releasedAt === "string") {
             if (!validDate.test(releasedAt)) return res.status(400).send({ status: false, message: 'Please enter the releasedAt date in "YYYY-MM-DD" format' })
